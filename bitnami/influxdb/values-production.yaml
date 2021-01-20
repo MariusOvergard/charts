@@ -67,7 +67,14 @@ auth:
     org: primary
     ## Primary bucket name and id
     ##
-    bucket:
+    bucket: primary
+  ## Whether to automatically create users' token
+  ## You should take into account this token are going to be create by CLI
+  ## so it is not possible to get them by k8s secrets nor to provide them though
+  ## values
+  ## See more influxdb 2.0 auth ref: https://docs.influxdata.com/influxdb/v2.0/security/tokens/
+  ##
+  createUserToken: false
   ## InfluxDB(TM) credentials for user with 'admin' privileges on the db specified at 'database' parameter
   ##
   user:
@@ -324,8 +331,8 @@ relay:
     # Array of InfluxDB(TM) instances to use as backends for Relay.
     output = [
         {{- $influxdbReplicaCount := int .Values.influxdb.replicaCount }}
-        {{- $influxdbFullname := include "influxdb.fullname" . }}
-        {{- $influxdbHeadlessServiceName := printf "%s-headless" (include "influxdb.fullname" .) }}
+        {{- $influxdbFullname := include "common.names.fullname" . }}
+        {{- $influxdbHeadlessServiceName := printf "%s-headless" (include "common.names.fullname" .) }}
         {{- $releaseName := .Release.Namespace }}
         {{- $clusterDomain:= .Values.clusterDomain }}
         {{- range $e, $i := until $influxdbReplicaCount }}
